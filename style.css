@@ -1,0 +1,144 @@
+/* Dark Theme General */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;  /* Dark background */
+    color: #e0e0e0;             /* Light text */
+}
+
+header {
+    background-color: #1f1f1f;
+    color: #ffffff;
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header nav a {
+    margin: 0 15px;
+    position: relative;
+    font-weight: 500;
+    color: #e0e0e0;
+}
+
+/* Hover underline animation */
+header nav a::after {
+    content: '';
+    display: block;
+    height: 2px;
+    width: 0;
+    background: #00bfff;
+    transition: 0.3s;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+}
+
+header nav a:hover::after {
+    width: 100%;
+}
+
+/* Section Styling */
+.about-section, .contact-section {
+    padding: 50px;
+    text-align: center;
+    background-color: #1f1f1f; /* dark card style background */
+    border-radius: 10px;
+    margin: 30px auto;
+    max-width: 900px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.about-section h2, .contact-section h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.about-section p, .contact-section p {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+/* Skills */
+.skills {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.skill {
+    background-color: #00bfff;
+    color: #121212;
+    padding: 10px 20px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.skill:hover {
+    transform: scale(1.1);
+}
+
+/* Profile Image */
+.profile-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #00bfff;
+    margin-bottom: 20px;
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Contact Form */
+.contact-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-section input, .contact-section textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+}
+
+.contact-section input::placeholder,
+.contact-section textarea::placeholder {
+    color: #aaa;
+}
+
+.contact-section button {
+    background-color: #00bfff;
+    color: #121212;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.contact-section button:hover {
+    background-color: #6a5acd;
+    color: white;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-20px);}
+    100% { opacity: 1; transform: translateY(0);}
+}
