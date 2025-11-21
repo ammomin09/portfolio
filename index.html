@@ -1,35 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><center>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AtaMohammad Momin | Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <title>AtaMohammad Momin - Full Stack Developer</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter Font --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #ef4444; /* Tailwind red-500 */
+            --dark-bg: #0d111b; /* Custom darker blue-gray for snow contrast */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .text-accent {
+            color: var(--primary-red);
+        }
+        .btn-primary {
+            background-color: var(--primary-red);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #dc2626; /* red-600 */
+            transform: scale(1.02);
+        }
+
+        /* --- General Animations --- */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .btn-primary.pulsing {
+            animation: pulse-red 2s infinite;
+        }
+
+        /* --- Dynamic Background: Snow and Lightning --- */
+        #weather-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+            background-color: var(--dark-bg); /* Base background for the weather effect */
+        }
+        
+        /* Canvas for Snow Particles */
+        #snow-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; 
+        }
+
+        /* Lightning Effect (Bright Aqua Flash overlay) */
+        #lightning-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Aqua flash color */
+            background: rgba(0, 255, 255, 1); 
+            opacity: 0;
+            transition: opacity 0.05s linear; /* Very fast transition for flash */
+            z-index: 10; /* Highest z-index for the flash */
+        }
+
+        /* Content Layer above the weather */
+        #main-content {
+            position: relative;
+            z-index: 5;
+            /* Semi-transparent overlay to help text readability */
+            background-color: rgba(17, 24, 39, 0.85); 
+            min-height: 100vh; /* Ensure content covers viewport height */
+        }
+
+        .card {
+            background-color: #1f2937; /* Darker gray background for cards */
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            /* Red glow shadow on hover */
+            box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.3), 0 4px 6px -2px rgba(239, 68, 68, 0.15);
+            background-color: #2b3543;
+        }
+        
+        /* Skills Tag Hover Effect */
+        .skill-tag {
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .skill-tag:hover {
+            transform: scale(1.05) rotate(1deg);
+            background-color: var(--primary-red);
+            color: var(--dark-bg);
+        }
+
+        /* Form Input Styling */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #1f2937; /* Same as card background */
+            border: 1px solid #374151; /* Gray border */
+            color: #fff;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-input:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5);
+            outline: none;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h2>AtaMohammad Momin</h2>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-    </header>
 
-    <section class="hero">
-        <img src="ata.jpg" alt="AtaMohammad Momin" class="profile-img">
-        <h1>Hello, I'm AtaMohammad Momin</h1>
-        <p>A Passionate Full Stack Web Developer building responsive and dynamic web applications using modern technologies.</p>
-        <a href="about.html" class="btn">Know More</a>
-    </section>
+    <!-- 
+        =====================================================
+        BACKGROUND EFFECTS: SNOW AND LIGHTNING
+        =====================================================
+    --><div id="weather-container">
+        <!-- Lightning Flash Overlay (Aqua color flash) --><div id="lightning-flash"></div>
+        <!-- Canvas for falling snow particles --><canvas id="snow-canvas"></canvas>
+    </div>
 
-    <section class="web-dev-details">
-        <h2>About My Work</h2>
-        <p>I specialize in creating full-stack web applications that are fast, secure, and user-friendly. My expertise covers front-end frameworks like React, back-end development with Node.js and Express, and database management using MongoDB and SQL. I enjoy turning ideas into interactive web experiences and optimizing performance for all devices.</p>
-    </section>
 
-    <footer>
-        &copy; 2025 AtaMohammad Momin | Full Stack Web Developer
-    </footer></center>
+    <!-- 
+        =====================================================
+        MAIN CONTENT (z-index 5)
+        =====================================================
+    --><div id="main-content" class="transition-all duration-300">
+        <!-- Header/Navigation --><header class="container mx-auto px-4 py-6 flex justify-between items-center z-10">
+            <div class="text-2xl font-extrabold text-white">
+                <span class="text-accent">Ata</span>Mohammad
+            </div>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="#home" class="text-accent hover:text-white transition duration-200">HOME</a>
+                <a href="#about" class="text-white hover:text-accent transition duration-200">ABOUT ME</a>
+                <a href="#services" class="text-white hover:text-accent transition duration-200">SERVICES</a>
+                <a href="#contact" class="text-white hover:text-accent transition duration-200">CONTACT</a>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-4">
+
+            <!-- 1. HERO SECTION --><section id="home" class="py-16 md:py-32 flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 order-2 md:order-1 mt-8 md:mt-0">
+                    <p class="text-lg text-white mb-2">Hello, My Name Is</p>
+                    <h1 class="text-5xl md:text-7xl font-extrabold leading-tight text-white mb-4">
+                        <span class="text-accent">ATAMOHAMMAD</span> MOMIN
+                    </h1>
+                    <h2 class="text-2xl text-white mb-6">
+                        A Passionate and Dedicated <span class="text-accent font-semibold">Full Stack Developer</span>
+                    </h2>
+                    <p class="text-gray-300 mb-8 max-w-lg">
+                        I build robust and scalable web applications from frontend to backend, driven by a passion for clean code, system architecture, and modern JavaScript frameworks.
+                    </p>
+                    <a href="#contact" class="btn-primary text-white font-medium py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition duration-300 inline-block pulsing">
+                        Contact Me
+                    </a>
+                </div>
+                <!-- Placeholder Image (Replace with your actual image path) --><div class="md:w-1/3 order-1 md:order-2 w-full max-w-sm rounded-xl overflow-hidden shadow-2xl bg-gray-800">
+                    <img src="ata" 
+                         alt="AtaMohammad Momin Portrait" 
+                         class="w-full h-auto object-cover opacity-90 hover:opacity-100 transition duration-500"
+                         onerror="this.onerror=null; this.src='https://placehold.co/400x550/222/FFF?text=AtaMohammad+Momin\n(Your+Photo)'">
+                </div>
+            </section>
+
+            <!-- 2. ABOUT ME SECTION --><section id="about" class="py-16 border-t border-gray-700">
+                <h3 class="text-4xl font-bold text-center mb-12">Who Am I?</h3>
+                <div class="flex flex-col md:flex-row items-start gap-12">
+                    <!-- About Text --><div class="md:w-2/3">
+                        <p class="text-accent font-semibold mb-4">About me</p>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            My name is AtaMohammad Momin, and I am a highly versatile Full Stack Developer specializing in the complete lifecycle of application development. I excel in transforming complex requirements into elegant, efficient, and user-friendly solutions. I thrive on the challenge of integrating seamless user interfaces with powerful, scalable backend systems.
+                        </p>
+                        <p class="text-gray-300 leading-relaxed mb-8">
+                            My core technical stack includes React/Angular for the frontend, Node.js/Python (Django/Flask) for the backend, and both relational (PostgreSQL, MySQL) and NoSQL (MongoDB, Firestore) databases. I am deeply committed to best practices, robust testing, and continuous learning to deliver cutting-edge digital experiences.
+                        </p>
+
+                        <!-- Added skill-tag class for hover effect --><div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                            <span class="skill-tag bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-full text-center cursor-pointer">React.js</span>
+                            <span class="skill-tag bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-full text-center cursor-pointer">Node.js / Express</span>
+                            <span class="skill-tag bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-full text-center cursor-pointer">Python / Django</span>
+                            <span class="skill-tag bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-full text-center cursor-pointer">PostgreSQL</span>
+                            <span class="skill-tag bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-full text-center cursor-pointer">AWS/Cloud</span>
+                            <span class="skill-tag bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-full text-center cursor-pointer">TypeScript</span>
+                            <span class="skill-tag bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-full text-center cursor-pointer">MongoDB</span>
+                            <span class="skill-tag bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-full text-center cursor-pointer">Docker</span>
+                        </div>
+                        <button class="bg-gray-800 text-accent border border-accent font-medium py-3 px-8 rounded-lg hover:bg-accent hover:text-white transition duration-300">
+                            Download CV (Example)
+                        </button>
+                    </div>
+
+                    <!-- Placeholder Image --><div class="md:w-1/3 w-full max-w-md mx-auto rounded-xl overflow-hidden shadow-2xl bg-gray-800">
+                         <img src="https://placehold.co/500x350/222/FFF?text=Working+at+Desk" 
+                             alt="Working at Desk" 
+                             class="w-full h-auto object-cover opacity-90 hover:opacity-100 transition duration-500"
+                             onerror="this.onerror=null; this.src='https://placehold.co/500x350/222/FFF?text=Working+at+Desk'">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. SERVICES SECTION --><section id="services" class="py-16 border-t border-gray-700">
+                <h3 class="text-4xl font-bold text-center mb-12">What I Can Do</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                    <!-- Service Cards --><div class="card p-6 rounded-xl shadow-lg">
+                        <div class="text-4xl mb-4 text-accent">⚙️</div>
+                        <h4 class="text-xl font-semibold mb-3 text-white">Backend API Development</h4>
+                        <p class="text-gray-400">
+                            Designing and building highly scalable, secure, and performant RESTful and GraphQL APIs using Node.js, Python, or Go.
+                        </p>
+                    </div>
+
+                    <div class="card p-6 rounded-xl shadow-lg">
+                        <div class="text-4xl mb-4 text-accent">💻</div>
+                        <h4 class="text-xl font-semibold mb-3 text-white">Modern Frontend Design</h4>
+                        <p class="text-gray-400">
+                            Creating dynamic, responsive, and accessible user interfaces using React, Angular, and Tailwind CSS/Material UI for optimal UX.
+                        </p>
+                    </div>
+
+                    <div class="card p-6 rounded-xl shadow-lg">
+                        <div class="text-4xl mb-4 text-accent">🗄️</div>
+                        <h4 class="text-xl font-semibold mb-3 text-white">Database Architecture</h4>
+                        <p class="text-gray-400">
+                            Expertise in database design, optimization, and management using SQL (PostgreSQL) and NoSQL (MongoDB) solutions for reliable data storage.
+                        </p>
+                    </div>
+
+                    <div class="card p-6 rounded-xl shadow-lg">
+                        <div class="text-4xl mb-4 text-accent">☁️</div>
+                        <h4 class="text-xl font-semibold mb-3 text-white">Cloud Deployment (DevOps)</h4>
+                        <p class="text-gray-400">
+                            Setting up CI/CD pipelines and deploying applications to cloud platforms like AWS, Azure, or Google Cloud using Docker and Kubernetes.
+                        </p>
+                    </div>
+
+                    <div class="card p-6 rounded-xl shadow-lg">
+                        <div class="text-4xl mb-4 text-accent">✅</div>
+                        <h4 class="text-xl font-semibold mb-3 text-white">Code Quality & Testing</h4>
+                        <p class="text-gray-400">
+                            Implementing unit, integration, and end-to-end tests (Jest, Cypress) to ensure high code quality, stability, and maintainability.
+                        </p>
+                    </div>
+
+                    <div class="card p-6 rounded-xl shadow-lg">
+                        <div class="text-4xl mb-4 text-accent">💡</div>
+                        <h4 class="text-xl font-semibold mb-3 text-white">Technical Consulting</h4>
+                        <p class="text-gray-400">
+                            Providing technical guidance on stack selection, architectural design, performance tuning, and scaling strategies for new and existing products.
+                        </p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 4. CONTACT/REGISTER SECTION --><section id="contact" class="py-16 border-t border-gray-700">
+                <h3 class="text-4xl font-bold text-center mb-4">
+                    Ready to Start a Project?
+                </h3>
+                <p class="text-gray-400 text-center mb-10 max-w-2xl mx-auto">
+                    Fill out the form below to register your interest or send me a direct message. I will respond to all serious inquiries promptly.
+                </p>
+
+                <div id="form-status" class="mb-4 text-center py-3 rounded-lg text-white font-medium hidden"></div>
+
+                <form id="contact-form" class="max-w-xl mx-auto p-6 card rounded-xl shadow-2xl">
+                    
+                    <div class="mb-5">
+                        <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Your Name</label>
+                        <input type="text" id="name" name="name" required class="form-input" placeholder="John Doe">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                        <input type="email" id="email" name="email" required class="form-input" placeholder="john.doe@example.com">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+                        <input type="text" id="subject" name="subject" required class="form-input" placeholder="Project Inquiry / Job Opportunity">
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Message</label>
+                        <textarea id="message" name="message" rows="4" required class="form-input" placeholder="Tell me about your project needs..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn-primary text-white w-full font-medium py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+                        Send Message & Initiate Connection
+                    </button>
+                </form>
+            </section>
+        </main>
+
+        <!-- Footer --><footer class="border-t border-gray-800 mt-12 py-8">
+            <div class="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center text-gray-500 text-sm">
+                <p>&copy; 2025 AtaMohammad Momin. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <!-- Placeholder Social Icons (Using simple text for brevity) --><a href="https://github.com/ammomin09" class="hover:text-accent transition duration-200">GitHub</a>
+                    <a href="https://www.linkedin.com/in/atamohammad-momin-104804395/" class="hover:text-accent transition duration-200">LinkedIn</a>
+                    
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 
+        =====================================================
+        JAVASCRIPT FOR DYNAMIC EFFECTS (Snow and Lightning)
+        =====================================================
+    --><script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const lightningFlash = document.getElementById('lightning-flash');
+            const snowCanvas = document.getElementById('snow-canvas');
+            const ctx = snowCanvas.getContext('2d');
+            
+            const contactForm = document.getElementById('contact-form');
+            const formStatus = document.getElementById('form-status');
+            const submitBtn = document.getElementById('submit-btn');
+
+            let snowflakes = [];
+            const maxSnowflakes = 200; // Increased count for denser snow
+
+            // --- 1. Canvas Setup ---
+            function setupCanvas() {
+                snowCanvas.width = window.innerWidth;
+                snowCanvas.height = window.innerHeight;
+            }
+
+            // Window resize handler to make canvas responsive
+            window.addEventListener('resize', setupCanvas);
+
+            // --- 2. Snow Particle System ---
+            function Snowflake() {
+                this.x = Math.random() * snowCanvas.width;
+                this.y = Math.random() * snowCanvas.height;
+                this.r = Math.random() * 2 + 0.5; // Size 0.5 to 2.5
+                this.d = Math.random() * maxSnowflakes; // Density for sine wave horizontal movement
+                this.speed = Math.random() * 1.5 + 0.5; // Vertical speed 0.5 to 2.0 (increased)
+                this.rotation = Math.random() * Math.PI * 2; // Initial random rotation
+                this.rotationSpeed = (Math.random() - 0.5) * 0.02; // Small random rotation speed
+            }
+
+            Snowflake.prototype.draw = function() {
+                ctx.save(); // Save current canvas state
+                ctx.translate(this.x, this.y); // Move origin to snowflake center
+                ctx.rotate(this.rotation); // Apply rotation
+                ctx.beginPath();
+                ctx.arc(0, 0, this.r, 0, Math.PI * 2, false);
+                ctx.fillStyle = "rgba(255, 255, 255, 0.9)"; // Brighter white snow
+                ctx.fill();
+                ctx.restore(); // Restore canvas state
+            }
+
+            Snowflake.prototype.update = function() {
+                // x movement using cosine wave for subtle drift
+                this.x += Math.cos(this.d * 0.1) * (this.speed * 0.5); // More dynamic horizontal drift
+                
+                // y movement
+                this.y += this.speed;
+
+                // Rotate the snowflake
+                this.rotation += this.rotationSpeed;
+
+                // If snowflake moves off screen, reset its position to the top
+                if (this.y > snowCanvas.height) {
+                    this.y = -5; // Reset just above the top edge
+                    this.x = Math.random() * snowCanvas.width;
+                    this.r = Math.random() * 2 + 0.5;
+                    this.d = Math.random() * maxSnowflakes;
+                    this.speed = Math.random() * 1.5 + 0.5;
+                    this.rotation = Math.random() * Math.PI * 2;
+                    this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+                }
+            }
+
+            function initSnow() {
+                setupCanvas();
+                for (let i = 0; i < maxSnowflakes; i++) {
+                    snowflakes.push(new Snowflake());
+                }
+            }
+
+            function drawSnow() {
+                // Clear previous frame
+                ctx.clearRect(0, 0, snowCanvas.width, snowCanvas.height); 
+                for (let i = 0; i < maxSnowflakes; i++) {
+                    snowflakes[i].update();
+                    snowflakes[i].draw();
+                }
+                requestAnimationFrame(drawSnow);
+            }
+
+
+            // --- 3. Lightning Sequence (Aqua Flash) ---
+            function flash(opacity, duration) {
+                return new Promise(resolve => {
+                    if (!lightningFlash) return resolve(); // Safety check
+                    lightningFlash.style.opacity = opacity;
+                    lightningFlash.style.transitionDuration = duration + 'ms';
+                    setTimeout(resolve, duration);
+                });
+            }
+
+            async function startLightningSequence() {
+                
+                const numFlashes = Math.floor(Math.random() * 3) + 1;
+                
+                for (let i = 0; i < numFlashes; i++) {
+                    const peakOpacity = 1.0; 
+                    // ENHANCED: Adjusted flash duration/hold time for a more dramatic effect (150-350ms)
+                    const flashDuration = 150 + Math.random() * 200; 
+
+                    // Flash ON - NEAR INSTANTANEOUS (5ms transition)
+                    await flash(peakOpacity, 5);
+                    
+                    // Hold and Flash OFF (fast transition back to dark)
+                    await flash(0, flashDuration);
+                    
+                    if (i < numFlashes - 1) {
+                         // ENHANCED: Small pause between multiple quick strikes (150-450ms)
+                         await new Promise(r => setTimeout(r, 150 + Math.random() * 300));
+                    }
+                }
+            }
+
+            function scheduleLightning() {
+                // ENHANCED: Schedule the next strike between 2 and 8 seconds for a more active storm
+                const nextStrikeTime = Math.random() * (8000 - 2000) + 2000;
+                
+                setTimeout(async () => {
+                    await startLightningSequence();
+                    scheduleLightning();
+                }, nextStrikeTime);
+            }
+
+            // --- 4. Form Submission Handler (Unchanged) ---
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                
+                formStatus.classList.add('hidden');
+                formStatus.classList.remove('bg-red-700', 'bg-green-700');
+
+                // Simulate API delay (2 seconds)
+                await new Promise(r => setTimeout(r, 2000));
+
+                // --- Simulated Success Response ---
+                if (Math.random() < 0.9) { 
+                    formStatus.textContent = 'Message sent! Prepare for the storm of code.';
+                    formStatus.classList.remove('hidden');
+                    formStatus.classList.add('bg-green-700');
+                    contactForm.reset();
+                    
+                    // Trigger an immediate lightning strike on successful submission
+                    await startLightningSequence(); 
+
+                } else {
+                    // --- Simulated Failure Response ---
+                    formStatus.textContent = 'Submission failed. Please check your network connection and try again.';
+                    formStatus.classList.remove('hidden');
+                    formStatus.classList.add('bg-red-700');
+                }
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message & Initiate Connection';
+            });
+
+            // --- 5. Initialize Effects ---
+            initSnow(); // Setup snow particles
+            drawSnow(); // Start the snow animation loop
+            scheduleLightning(); // Start the infinite lightning cycle
+        });
+    </script>
+
 </body>
 </html>
